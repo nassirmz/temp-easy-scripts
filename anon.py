@@ -10,12 +10,11 @@ consoleOutput = None
 inputSandbox = None
 inputUsername = None
 inputPassword = None
+inputScriptFile = None
 inputExec = None
 
-# todo: optinally replace tempInlineScript with entry param
-
-def handleProcess(command, name):
-    p = Popen(command + " " + inputSandbox.get() + " tempInlineScript " + inputUsername.get() + " " + inputPassword.get(), shell=True, bufsize=-1, stdout=PIPE, stderr=PIPE)
+def handleProcess(command, script, name):
+    p = Popen(command + " " + inputSandbox.get() + " " + script + " " + + inputUsername.get() + " " + inputPassword.get(), shell=True, bufsize=-1, stdout=PIPE, stderr=PIPE)
     tSplit = Thread(target=handleProcessSplitter, args=[p, name])
     tSplit.daemon = True
     tSplit.start()
@@ -48,13 +47,17 @@ def clearOutput():
     consoleOutput.see(END)
     frame.update_idletasks()
 
+def runScript():
+    global inputScriptFile
+    handleProcess("./executeApex.sh", inputScriptFile.get(), "Run Script")
+
 def runAnon():
-    global inputExec, outputExec
+    global inputExec
     script = inputExec.get('1.0', END)
     file = open("tempInlineScript", "w")
     file.write(script)
     file.close()
-    handleProcess("./executeApex.sh", "Run Anon")
+    handleProcess("./executeApex.sh", "tempInlineScript", "Run Anon")
 
 def createUI():
     global frame, consoleOutput, inputSandbox, inputUsername, inputPassword, inputExec
@@ -85,8 +88,14 @@ def createUI():
     inputSandbox.insert(0, "pladev")
     inputSandbox.grid(row=1, column=1, sticky='ew')
     
+    Label(frame, text="script: ").grid(row=1, column=2, sticky='e')
+    inputScriptFile = Entry(frame, width=inputWidth)
+    inputScriptFile.insert(0, "")
+    inputScriptFile.grid(row=1, column=3, sticky='ew')
+    
     Button(bframe, text="Run Anon", command=runAnon, width=buttonWidth).grid(row=2, column=0, sticky='ew')
-    Button(bframe, text="Clear Output", command=clearOutput, width=buttonWidth).grid(row=2, column=1, sticky='ew')
+    Button(bframe, text="Run Script", command=runScript, width=buttonWidth).grid(row=2, column=1, sticky='ew')
+    Button(bframe, text="Clear Output", command=clearOutput, width=buttonWidth).grid(row=2, column=2, sticky='ew')
     
     inputExec = Text(bframe, width=width*4)
     inputExec.grid(row=3, column=0, columnspan=4, sticky='ew')

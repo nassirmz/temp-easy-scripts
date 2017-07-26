@@ -4,7 +4,7 @@ source easy.config
 
 arg=$1
 
-if [ $arg == anon ]; then
+if [[ -n $arg && $arg = "anon" ]]; then
 	python3 anon.py $username
 else
 	python3 easy.py $username
