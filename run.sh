@@ -1,4 +1,11 @@
 #!/bin/bash
 cd $(dirname $0)
 source easy.config
-python3 easy.py $username
+
+arg=$1
+
+if [ $arg == anon ]; then
+	python3 anon.py $username
+else
+	python3 easy.py $username
+fi

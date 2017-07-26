@@ -1,9 +1,17 @@
-echo "./executeApex.sh <username> <sandbox> <file path of script to execute> [<skip login>]"
+echo "./executeApex.sh <sandbox> <path to script> <username> <password>"
 
-username=$1
-sandbox=$2
-executeCode=$3
-skipLogin=$4
+sandbox=$1
+executeCode=$2
+username=$3
+password=$4
+
+if [ -z $sandbox ]; then
+  read -p 'sandbox: ' sandbox
+fi
+
+if [ -z $executeCode ]; then
+  read -p 'path to script: ' executeCode
+fi
 
 if [ -z $username ]; then
   read -p 'username: ' username
@@ -14,18 +22,12 @@ if [[ -z $password  && -z $skipLogin ]]; then
   echo ''
 fi
 
-if [ -z $sandbox ]; then
-  read -p 'sandbox: ' sandbox
-fi
-
-if [ -z $executeCode ]; then
-  read -p 'file path of script to execute: ' executeCode
-fi
-
 loginUrl=test.salesforce.com
 loginUsername=$username.$sandbox
 
-if [ -z $skipLogin ]; then
-	./force login -i=$loginUrl -u=$loginUsername -p=$password
-fi
+#if [ -z $skipLogin ]; then
+#	./force login -i=$loginUrl -u=$loginUsername -p=$password
+#fi
+
+export SFDX_LOG_LEVEL=DEBUG
 ./force apex $executeCode
