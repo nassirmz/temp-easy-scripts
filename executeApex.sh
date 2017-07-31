@@ -30,4 +30,4 @@ loginUsername=$username.$sandbox
 #fi
 
 export SFDX_LOG_LEVEL=DEBUG
-./force apex $executeCode
+./force apex scripts/$executeCode

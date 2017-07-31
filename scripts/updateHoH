@@ -1,0 +1,7 @@
+List<HOH__c> accountsToUpdate = [SELECT Name, Household_Number__c, HouseNumber_Role__c FROM HOH__c WHERE HouseNumber_Role__c = '' LIMIT 10000];
+
+for(integer b = 0; b < accountsToUpdate.size(); b++) {
+    accountsToUpdate[b].HouseNumber_Role__c = accountsToUpdate[b].Household_Number__c + ',' + accountsToUpdate[b].Name;
+}
+
+update accountsToUpdate;

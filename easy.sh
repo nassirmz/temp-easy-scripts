@@ -8,7 +8,7 @@ username=$5
 password=$6
 
 if [ -z $username ]; then
-	username=manuk.hovanesian@farmersinsurance.com
+	read -p 'username: ' username
 fi
 
 if [ -z $password ]; then
@@ -34,6 +34,7 @@ if [[ $2 =~ ^[Yy]$ ]]
 then
 	pushd $sfDirectory/scripts
 	(
+		echo $username $password $sandbox
 		./find-dif.sh ${baseCommit}
 		classes=$(cat classes-modified.txt)
 		pages=$(cat pages-modified.txt)

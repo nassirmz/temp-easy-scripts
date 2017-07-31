@@ -1,4 +1,4 @@
-from os import system
+import os
 from tkinter import *
 from subprocess import Popen, PIPE, STDOUT
 import sys
@@ -14,13 +14,13 @@ inputScriptFile = None
 inputExec = None
 
 def handleProcess(command, script, name):
-    p = Popen(command + " " + inputSandbox.get() + " " + script + " " + + inputUsername.get() + " " + inputPassword.get(), shell=True, bufsize=-1, stdout=PIPE, stderr=PIPE)
+    p = Popen(command + " " + inputSandbox.get() + " " + script + " " + inputUsername.get() + " " + inputPassword.get(), shell=True, bufsize=-1, stdout=PIPE, stderr=PIPE)
     tSplit = Thread(target=handleProcessSplitter, args=[p, name])
     tSplit.daemon = True
     tSplit.start()
 
 def handleProcessSplitter(p, name):
-    tOut = Thread(target=showOutput, args=[p.stdout, "blue"])
+    tOut = Thread(target=showOutput, args=[p.stdout, "blue", True])
     tErr = Thread(target=showOutput, args=[p.stderr, "red"])
     tOut.daemon = True
     tErr.daemon = True
@@ -30,10 +30,14 @@ def handleProcessSplitter(p, name):
     tErr.join()
     addConsoleOutputLine("\nEND: " + name + "\n", "black")
 
-def showOutput(out, color):
+def showOutput(out, color, filterDebug=False):
     for line in iter(out.readline, b''):
-        addConsoleOutputLine(line, color)
+        if (not filterDebug) or isDebug(line):
+            addConsoleOutputLine(line, color)
     out.close()
+
+def isDebug(line):
+    return "|DEBUG|" in str(line)
 
 def addConsoleOutputLine(line, color):
     global consoleOutput, frame
@@ -54,13 +58,17 @@ def runScript():
 def runAnon():
     global inputExec
     script = inputExec.get('1.0', END)
-    file = open("tempInlineScript", "w")
+    file = open("scripts/tempInlineScript", "w")
     file.write(script)
     file.close()
     handleProcess("./executeApex.sh", "tempInlineScript", "Run Anon")
 
+def listScripts():
+    for script in os.listdir("scripts"):
+        addConsoleOutputLine(script + "\n", "black")
+
 def createUI():
-    global frame, consoleOutput, inputSandbox, inputUsername, inputPassword, inputExec
+    global frame, consoleOutput, inputSandbox, inputUsername, inputPassword, inputExec, inputScriptFile
     root = Tk()
     root.wm_title("\"we makin' stuff better\" - Ben Franklin")
     root.resizable(False, False)
@@ -96,6 +104,7 @@ def createUI():
     Button(bframe, text="Run Anon", command=runAnon, width=buttonWidth).grid(row=2, column=0, sticky='ew')
     Button(bframe, text="Run Script", command=runScript, width=buttonWidth).grid(row=2, column=1, sticky='ew')
     Button(bframe, text="Clear Output", command=clearOutput, width=buttonWidth).grid(row=2, column=2, sticky='ew')
+    Button(bframe, text="List Scripts", command=listScripts, width=buttonWidth).grid(row=2, column=3, sticky='ew')
     
     inputExec = Text(bframe, width=width*4)
     inputExec.grid(row=3, column=0, columnspan=4, sticky='ew')
@@ -118,7 +127,7 @@ def createUI():
     consoleOutput['yscrollcommand'] = scrollbar.set
      
     root.lift()
-    system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "Python" to true' ''')
+    os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "Python" to true' ''')
     root.mainloop()
 
 createUI()
