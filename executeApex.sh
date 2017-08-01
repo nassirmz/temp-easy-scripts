@@ -1,33 +1,39 @@
-echo "./executeApex.sh <sandbox> <path to script> <username> <password>"
+echo "./executeApex.sh <username> <password> <path to script> <Sandbox List>"
 
-sandbox=$1
-executeCode=$2
-username=$3
-password=$4
+# get input
+username=$1
+password=$2
+executeCode=$3
+sandboxList=${@:4}
 
-if [ -z $sandbox ]; then
-  read -p 'sandbox: ' sandbox
+if [ -z $username ]; then
+	read -p 'username: ' username
+fi
+
+if [ -z $password ]; then
+	read -s -p 'password: ' password
+	echo ''
 fi
 
 if [ -z $executeCode ]; then
-  read -p 'path to script: ' executeCode
+	read -p 'path to script: ' executeCode
 fi
 
-if [ -z $username ]; then
-  read -p 'username: ' username
+if [ -z sandboxList ]; then
+	read -p 'sandbox list: ' sandboxList
 fi
 
-if [[ -z $password  && -z $skipLogin ]]; then
-  read -s -p 'password: ' password
-  echo ''
-fi
-
+# prepare
 loginUrl=test.salesforce.com
-loginUsername=$username.$sandbox
+export https_proxy=http://10.132.40.23:80
+export http_proxy=http://10.132.40.23:80
 
-#if [ -z $skipLogin ]; then
-#	./force login -i=$loginUrl -u=$loginUsername -p=$password
-#fi
-
-export SFDX_LOG_LEVEL=DEBUG
-./force apex scripts/$executeCode
+for sandbox in $sandboxList; do
+	echo sandbox $sandbox
+	# login
+	loginUsername=$username.$sandbox
+	./force login -i=$loginUrl -u=$loginUsername -p=$password
+	
+	# run script
+	./force apex $executeCode
+done

@@ -13,8 +13,8 @@ inputPassword = None
 inputScriptFile = None
 inputExec = None
 
-def handleProcess(command, script, name):
-    p = Popen(command + " " + inputSandbox.get() + " " + script + " " + inputUsername.get() + " " + inputPassword.get(), shell=True, bufsize=-1, stdout=PIPE, stderr=PIPE)
+def handleProcess(script, name):
+    p = Popen("./executeApex.sh " + inputUsername.get() + " " + inputPassword.get() + " scripts/" + script + " " + inputSandbox.get(), shell=True, bufsize=-1, stdout=PIPE, stderr=PIPE)
     tSplit = Thread(target=handleProcessSplitter, args=[p, name])
     tSplit.daemon = True
     tSplit.start()
@@ -32,8 +32,8 @@ def handleProcessSplitter(p, name):
 
 def showOutput(out, color, filterDebug=False):
     for line in iter(out.readline, b''):
-        if (not filterDebug) or isDebug(line):
-            addConsoleOutputLine(line, color)
+        #if (not filterDebug) or isDebug(line):
+        addConsoleOutputLine(line, color)
     out.close()
 
 def isDebug(line):
@@ -53,7 +53,7 @@ def clearOutput():
 
 def runScript():
     global inputScriptFile
-    handleProcess("./executeApex.sh", inputScriptFile.get(), "Run Script")
+    handleProcess(inputScriptFile.get(), "Run Script")
 
 def runAnon():
     global inputExec
@@ -61,7 +61,7 @@ def runAnon():
     file = open("scripts/tempInlineScript", "w")
     file.write(script)
     file.close()
-    handleProcess("./executeApex.sh", "tempInlineScript", "Run Anon")
+    handleProcess("tempInlineScript", "Run Anon")
 
 def listScripts():
     for script in os.listdir("scripts"):

@@ -1,1 +1,14 @@
-system.debug('hi');
+void setFeatureFlag(String flagName, String newValue) {
+    CSS_FeatureFlags__c flag = CSS_FeatureFlags__c.getInstance(flagName);
+    if (flag == null) { // create
+        flag = new CSS_FeatureFlags__c();
+        flag.name = flagName;
+        flag.value__c = newValue;
+        insert flag;
+    } else if (flag.value__c != newValue) { // update
+        flag.value__c = newValue;
+        update flag;
+    }
+}
+
+setFeatureFlag('testAnon2', 'working3');
