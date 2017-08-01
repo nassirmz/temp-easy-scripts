@@ -14,8 +14,6 @@ inputPassword = None
 inputScriptFile = None
 inputExec = None
 
-# restore anon script
-# parrallel sandboxes
 # debug out only
 
 def handleProcessSandboxList(script, name):
@@ -24,7 +22,7 @@ def handleProcessSandboxList(script, name):
 
 def handleProcess(script, sandbox, name):
     p = Popen("./executeApex.sh " + inputUsername.get() + " " + inputPassword.get() + " scripts/" + script + " " + sandbox, shell=True, bufsize=-1, stdout=PIPE, stderr=PIPE)
-    tSplit = Thread(target=handleProcessSplitter, args=[p, name + " . " sandbox])
+    tSplit = Thread(target=handleProcessSplitter, args=[p, name + " . " + sandbox])
     tSplit.daemon = True
     tSplit.start()
 
@@ -59,6 +57,13 @@ def clearOutput():
     consoleOutput.delete('1.0', END)
     consoleOutput.see(END)
     frame.update_idletasks()
+
+def fillInputExec():
+    global inputExec
+    file = open("scripts/tempInlineScript", "r")
+    fill = file.read()
+    file.close()
+    inputExec.insert(END, fill)
 
 def runScript():
     global inputScriptFile
@@ -122,6 +127,7 @@ def createUI():
     inputExec.tag_config("black", foreground="black")
     inputExec.tag_config("red", foreground="red")
     inputExec.tag_config("blue", foreground="blue")
+    fillInputExec()
   
     scrollbar = Scrollbar(bframe, command=inputExec.yview)
     scrollbar.grid(row=3, column=4, sticky='nsew')
