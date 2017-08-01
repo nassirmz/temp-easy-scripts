@@ -11,4 +11,6 @@ void setFeatureFlag(String flagName, String newValue) {
     }
 }
 
-setFeatureFlag('a', 'b');
+setFeatureFlag('a', 'ccc');
+
+system.debug('hi');

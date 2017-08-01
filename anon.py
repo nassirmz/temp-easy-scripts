@@ -14,8 +14,6 @@ inputPassword = None
 inputScriptFile = None
 inputExec = None
 
-# debug out only
-
 def handleProcessSandboxList(script, name):
     for sandbox in re.split('[ ,]+', inputSandbox.get()):
         handleProcess(script, sandbox, name)
@@ -39,8 +37,8 @@ def handleProcessSplitter(p, name):
 
 def showOutput(out, color, filterDebug=False):
     for line in iter(out.readline, b''):
-        #if (not filterDebug) or isDebug(line):
-        addConsoleOutputLine(line, color)
+        if (not filterDebug) or isDebug(line):
+            addConsoleOutputLine(line, color)
     out.close()
 
 def isDebug(line):
