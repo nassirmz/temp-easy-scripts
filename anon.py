@@ -56,11 +56,12 @@ def clearOutput():
     consoleOutput.see(END)
     frame.update_idletasks()
 
-def fillInputExec():
+def fillInputExec(script):
     global inputExec
-    file = open("scripts/tempInlineScript", "r")
+    file = open("scripts/" + script, "r")
     fill = file.read()
     file.close()
+    inputExec.delete('1.0', END)
     inputExec.insert(END, fill)
 
 def runScript():
@@ -70,16 +71,26 @@ def runScript():
 
 def runAnon():
     global inputExec
-    script = inputExec.get('1.0', END)
-    file = open("scripts/tempInlineScript", "w")
-    file.write(script)
-    file.close()
+    saveScript("tempInlineScript")
     # handleProcessList("tempInlineScript", "Run Anon")
     handleProcess("tempInlineScript", inputSandbox.get(), "Run Anon")
 
 def listScripts():
     for script in os.listdir("scripts"):
         addConsoleOutputLine(script + "\n", "black")
+
+def viewScript():
+    fillInputExec(inputScriptFile.get())
+
+def saveOpenScript():
+    saveScript(inputScriptFile.get())
+
+def saveScript(scriptFile):
+    global inputExec
+    script = inputExec.get('1.0', END)
+    file = open("scripts/" + scriptFile, "w")
+    file.write(script)
+    file.close()
 
 def createUI():
     global frame, consoleOutput, inputSandbox, inputUsername, inputPassword, inputExec, inputScriptFile
@@ -88,12 +99,14 @@ def createUI():
     root.resizable(False, False)
     frame = Frame(root)
     frame.grid(row=0, column=0, pady=5)
+    buttonFrame = Frame(root)
+    buttonFrame.grid(row=1, column=0)
     bframe = Frame(root)
-    bframe.grid(row=1, column=0)
+    bframe.grid(row=2, column=0)
     
     inputWidth = 20
     width = 20
-    buttonWidth = 15
+    buttonWidth = 10
     
     Label(frame, text="username: ").grid(row=0, column=0, sticky='e')
     inputUsername = Entry(frame, width=inputWidth)
@@ -115,30 +128,32 @@ def createUI():
     inputScriptFile.insert(0, "")
     inputScriptFile.grid(row=1, column=3, sticky='ew')
     
-    Button(bframe, text="Run Anon", command=runAnon, width=buttonWidth).grid(row=2, column=0, sticky='ew')
-    Button(bframe, text="Run Script", command=runScript, width=buttonWidth).grid(row=2, column=1, sticky='ew')
-    Button(bframe, text="Clear Output", command=clearOutput, width=buttonWidth).grid(row=2, column=2, sticky='ew')
-    Button(bframe, text="List Scripts", command=listScripts, width=buttonWidth).grid(row=2, column=3, sticky='ew')
+    Button(buttonFrame, text="Run Anon", command=runAnon, width=buttonWidth).grid(row=2, column=0, sticky='ew')
+    Button(buttonFrame, text="Run Script", command=runScript, width=buttonWidth).grid(row=2, column=1, sticky='ew')
+    Button(buttonFrame, text="Clear Output", command=clearOutput, width=buttonWidth).grid(row=2, column=2, sticky='ew')
+    Button(buttonFrame, text="List Scripts", command=listScripts, width=buttonWidth).grid(row=2, column=3, sticky='ew')
+    Button(buttonFrame, text="View Script", command=viewScript, width=buttonWidth).grid(row=2, column=4, sticky='ew')
+    Button(buttonFrame, text="Save Script", command=saveOpenScript, width=buttonWidth).grid(row=2, column=5, sticky='ew')
     
-    inputExec = Text(bframe, width=width*4)
-    inputExec.grid(row=3, column=0, columnspan=4, sticky='ew')
+    inputExec = Text(bframe)
+    inputExec.grid(row=0, column=0, sticky='ew')
     inputExec.tag_config("black", foreground="black")
     inputExec.tag_config("red", foreground="red")
     inputExec.tag_config("blue", foreground="blue")
-    fillInputExec()
+    fillInputExec("tempInlineScript")
   
     scrollbar = Scrollbar(bframe, command=inputExec.yview)
-    scrollbar.grid(row=3, column=4, sticky='nsew')
+    scrollbar.grid(row=0, column=1, sticky='nsew')
     inputExec['yscrollcommand'] = scrollbar.set
     
-    consoleOutput = Text(bframe, width=width*4)
-    consoleOutput.grid(row=4, column=0, columnspan=4, sticky='ew')
+    consoleOutput = Text(bframe)
+    consoleOutput.grid(row=1, column=0, sticky='ew')
     consoleOutput.tag_config("black", foreground="black")
     consoleOutput.tag_config("red", foreground="red")
     consoleOutput.tag_config("blue", foreground="blue")
     
     scrollbar = Scrollbar(bframe, command=consoleOutput.yview)
-    scrollbar.grid(row=4, column=4, sticky='nsew')
+    scrollbar.grid(row=1, column=1, sticky='nsew')
     consoleOutput['yscrollcommand'] = scrollbar.set
      
     root.lift()

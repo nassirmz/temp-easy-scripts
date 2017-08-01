@@ -1,16 +1,19 @@
-void setFeatureFlag(String flagName, String newValue) {
-    CSS_FeatureFlags__c flag = CSS_FeatureFlags__c.getInstance(flagName);
-    if (flag == null) { // create
-        flag = new CSS_FeatureFlags__c();
-        flag.name = flagName;
-        flag.value__c = newValue;
-        insert flag;
-    } else if (flag.value__c != newValue) { // update
-        flag.value__c = newValue;
-        update flag;
-    }
+List<String> updateRows = new List<String>();
+updateRows.add('2501');
+updateRows.add('2502');
+updateRows.add('2503');
+updateRows.add('2504');
+updateRows.add('2518');
+updateRows.add('2519');
+updateRows.add('2521');
+
+List<CSS_Error_Codes__c> contents = [SELECT Id, Name, Codes__c, Description__c, UI_Errordescription__c, Use_Case_Name__c FROM CSS_Error_Codes__c where Codes__c in :updateRows];
+for (CSS_Error_Codes__c content : contents) {
+   system.debug('previous content: ' + content);
+   content.UI_Errordescription__c = 'We could not locate your account with the information provided. Please call us at 1-855-878-3157 for assistance with your account.';
+   update content;
 }
 
-setFeatureFlag('a', 'ccc');
+List<CSS_Error_Codes__c> afterContents = [SELECT Id, Name, Codes__c, Description__c, UI_Errordescription__c, Use_Case_Name__c FROM CSS_Error_Codes__c where Codes__c in :updateRows];
 
-system.debug('hi');
+
