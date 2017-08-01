@@ -4,6 +4,7 @@ from subprocess import Popen, PIPE, STDOUT
 import sys
 from getpass import getpass
 from threading  import Thread
+import re
 
 frame = None
 consoleOutput = None
@@ -13,9 +14,17 @@ inputPassword = None
 inputScriptFile = None
 inputExec = None
 
-def handleProcess(script, name):
-    p = Popen("./executeApex.sh " + inputUsername.get() + " " + inputPassword.get() + " scripts/" + script + " " + inputSandbox.get(), shell=True, bufsize=-1, stdout=PIPE, stderr=PIPE)
-    tSplit = Thread(target=handleProcessSplitter, args=[p, name])
+# restore anon script
+# parrallel sandboxes
+# debug out only
+
+def handleProcessSandboxList(script, name):
+    for sandbox in re.split('[ ,]+', inputSandbox.get()):
+        handleProcess(script, sandbox, name)
+
+def handleProcess(script, sandbox, name):
+    p = Popen("./executeApex.sh " + inputUsername.get() + " " + inputPassword.get() + " scripts/" + script + " " + sandbox, shell=True, bufsize=-1, stdout=PIPE, stderr=PIPE)
+    tSplit = Thread(target=handleProcessSplitter, args=[p, name + " . " sandbox])
     tSplit.daemon = True
     tSplit.start()
 
@@ -53,7 +62,8 @@ def clearOutput():
 
 def runScript():
     global inputScriptFile
-    handleProcess(inputScriptFile.get(), "Run Script")
+    # handleProcessList(inputScriptFile.get(), "Run Script")
+    handleProcess(inputScriptFile.get(), inputSandbox.get(), "Run Script")
 
 def runAnon():
     global inputExec
@@ -61,7 +71,8 @@ def runAnon():
     file = open("scripts/tempInlineScript", "w")
     file.write(script)
     file.close()
-    handleProcess("tempInlineScript", "Run Anon")
+    # handleProcessList("tempInlineScript", "Run Anon")
+    handleProcess("tempInlineScript", inputSandbox.get(), "Run Anon")
 
 def listScripts():
     for script in os.listdir("scripts"):

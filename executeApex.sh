@@ -29,11 +29,13 @@ export https_proxy=http://10.132.40.23:80
 export http_proxy=http://10.132.40.23:80
 
 for sandbox in $sandboxList; do
-	echo sandbox $sandbox
-	# login
-	loginUsername=$username.$sandbox
-	./force login -i=$loginUrl -u=$loginUsername -p=$password
+	(
+		echo sandbox $sandbox
+		# login
+		loginUsername=$username.$sandbox
+		./force login -i=$loginUrl -u=$loginUsername -p=$password
 	
-	# run script
-	./force apex $executeCode
+		# run script
+		./force apex $executeCode
+		) &
 done

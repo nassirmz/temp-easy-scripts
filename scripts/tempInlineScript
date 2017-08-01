@@ -11,4 +11,4 @@ void setFeatureFlag(String flagName, String newValue) {
     }
 }
 
-setFeatureFlag('testAnon2', 'working3');
+setFeatureFlag('a', 'b');
