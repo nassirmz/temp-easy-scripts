@@ -97,12 +97,16 @@ def createUI():
     root = Tk()
     root.wm_title("\"we makin' stuff better\" - Ben Franklin")
     root.resizable(False, False)
+    
     frame = Frame(root)
-    frame.grid(row=0, column=0, pady=5)
+    frame.grid(row=0, column=0, pady=5, sticky='nsew')
     buttonFrame = Frame(root)
-    buttonFrame.grid(row=1, column=0)
+    buttonFrame.grid(row=1, column=0, sticky='nsew')
     bframe = Frame(root)
-    bframe.grid(row=2, column=0)
+    bframe.grid(row=2, column=0, sticky='nsew')
+    
+    bframe.grid_rowconfigure(0, weight=1)
+    bframe.grid_columnconfigure(0, weight=1)
     
     inputWidth = 20
     width = 20
@@ -134,7 +138,7 @@ def createUI():
     Button(buttonFrame, text="List Scripts", command=listScripts, width=buttonWidth).grid(row=2, column=3, sticky='ew')
     Button(buttonFrame, text="View Script", command=viewScript, width=buttonWidth).grid(row=2, column=4, sticky='ew')
     Button(buttonFrame, text="Save Script", command=saveOpenScript, width=buttonWidth).grid(row=2, column=5, sticky='ew')
-    
+
     inputExec = Text(bframe)
     inputExec.grid(row=0, column=0, sticky='ew')
     inputExec.tag_config("black", foreground="black")
