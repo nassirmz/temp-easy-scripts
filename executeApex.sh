@@ -36,6 +36,6 @@ for sandbox in $sandboxList; do
 		./force login -i=$loginUrl -u=$loginUsername -p=$password
 	
 		# run script
-		./force apex $executeCode
-		) &
+		./force apex $executeCode | tee logs/$(basename $executeCode)-$sandbox.log
+	) &
 done
