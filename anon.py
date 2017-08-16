@@ -67,6 +67,7 @@ def fillInputExec(script):
 def runScript():
     global inputScriptFile
     # handleProcessList(inputScriptFile.get(), "Run Script")
+    viewScript()
     handleProcess(inputScriptFile.get(), inputSandbox.get(), "Run Script")
 
 def runAnon():
