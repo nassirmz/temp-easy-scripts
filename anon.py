@@ -37,12 +37,13 @@ def handleProcessSplitter(p, name):
 
 def showOutput(out, color, filterDebug=False):
     for line in iter(out.readline, b''):
+        print(line)
         if (not filterDebug) or isDebug(line):
             addConsoleOutputLine(line, color)
     out.close()
 
 def isDebug(line):
-    return "|DEBUG|" in str(line)
+    return "|DEBUG|" in str(line) or "|EXCEPTION_THROWN|" in str(line) or "|FATAL_ERROR|" in str(line)
 
 def addConsoleOutputLine(line, color):
     global consoleOutput, frame
