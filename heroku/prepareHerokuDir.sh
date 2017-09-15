@@ -48,30 +48,26 @@ chmod +x scripts/deploy.sh
 
 # apps config
 for env in ${envs[*]} ; do
-	echo $env css-$env-$serviceName-service- >> scripts/apps.config
+	echo $env css-$env-$serviceName-service >> scripts/apps.config
 done
 
-echo 'echo "./deploy.sh <optional -b to build> <env> <optional version defaults v1>"' >> scripts/deploy.sh
+echo 'echo "./deploy.sh <optional -b to build> <env>"' >> scripts/deploy.sh
 echo '' >> scripts/deploy.sh
 echo 'getopts b build' >> scripts/deploy.sh
 echo 'shift "$((OPTIND-1))"' >> scripts/deploy.sh
 echo 'env=$1' >> scripts/deploy.sh
-echo 'version=$2' >> scripts/deploy.sh
 echo '' >> scripts/deploy.sh
 echo 'if [ -z $env ]; then' >> scripts/deploy.sh
 echo '  read -p "env: " env' >> scripts/deploy.sh
 echo 'fi' >> scripts/deploy.sh
 echo '' >> scripts/deploy.sh
-echo 'if [ -z $version ]; then' >> scripts/deploy.sh
-echo '  version=v1' >> scripts/deploy.sh
-echo 'fi' >> scripts/deploy.sh
 echo '' >> scripts/deploy.sh
 echo 'cd "${0%/*}"/..' >> scripts/deploy.sh
 echo '' >> scripts/deploy.sh
-echo 'appPrefix=$(grep "$env" scripts/apps.config | cut -f2 -d " ")' >> scripts/deploy.sh
+echo 'appName=$(grep "$env" scripts/apps.config | cut -f2 -d " ")' >> scripts/deploy.sh
 echo 'if [ $build != ? ]; then' >> scripts/deploy.sh
 echo '  echo "building"' >> scripts/deploy.sh
 echo '  ./gradlew -Dhttp.proxyHost=10.132.40.23 -Dhttp.proxyPort=80 -Dhttps.proxyHost=10.132.40.23 -Dhttps.proxyPort=80 clean build' >> scripts/deploy.sh
 echo 'fi' >> scripts/deploy.sh
 echo 'export HTTPS_PROXY=http://10.132.40.23:80' >> scripts/deploy.sh
-echo 'heroku deploy:jar build/libs/*.jar --app $appPrefix$version' >> scripts/deploy.sh
+echo 'heroku deploy:jar build/libs/*.jar --app $appName' >> scripts/deploy.sh
