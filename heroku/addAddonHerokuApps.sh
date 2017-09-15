@@ -18,5 +18,5 @@ fi
 for env in ${envs[*]} ; do
 	appName=css-$env-$serviceName-service
 	echo adding addon to app $appName
-	heroku addons:create heroku-postgresql:hobby-dev -a css-dev-bus-hrs-service
+	heroku addons:create $addonName -a $appName
 done
