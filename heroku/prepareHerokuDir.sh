@@ -44,13 +44,16 @@ rm -rf scripts
 mkdir scripts
 touch 'scripts/deploy.sh'
 touch 'scripts/apps.config'
+touch 'scripts/logs.sh'
 chmod +x scripts/deploy.sh
+chmod +x scripts/logs.sh
 
 # apps config
 for env in ${envs[*]} ; do
 	echo $env css-$env-$serviceName-service >> scripts/apps.config
 done
 
+# deploy script
 echo 'echo "./deploy.sh <optional -b to build> <env>"' >> scripts/deploy.sh
 echo '' >> scripts/deploy.sh
 echo 'getopts b build' >> scripts/deploy.sh
@@ -61,7 +64,6 @@ echo 'if [ -z $env ]; then' >> scripts/deploy.sh
 echo '  read -p "env: " env' >> scripts/deploy.sh
 echo 'fi' >> scripts/deploy.sh
 echo '' >> scripts/deploy.sh
-echo '' >> scripts/deploy.sh
 echo 'cd "${0%/*}"/..' >> scripts/deploy.sh
 echo '' >> scripts/deploy.sh
 echo 'appName=$(grep "$env" scripts/apps.config | cut -f2 -d " ")' >> scripts/deploy.sh
@@ -71,3 +73,15 @@ echo '  ./gradlew -Dhttp.proxyHost=10.132.40.23 -Dhttp.proxyPort=80 -Dhttps.prox
 echo 'fi' >> scripts/deploy.sh
 echo 'export HTTPS_PROXY=http://10.132.40.23:80' >> scripts/deploy.sh
 echo 'heroku deploy:jar build/libs/*.jar --app $appName' >> scripts/deploy.sh
+
+# logs script
+echo 'echo "./logs.sh <env>"' >> scripts/logs.sh
+echo '' >> scripts/logs.sh
+echo 'env=$1' >> scripts/logs.sh
+echo 'if [ -z $env ]; then' >> scripts/logs.sh
+echo '  read -p "env: " env' >> scripts/logs.sh
+echo 'fi' >> scripts/logs.sh
+echo '' >> scripts/logs.sh
+echo 'cd "${0%/*}"/..' >> scripts/logs.sh
+echo 'appName=$(grep "$env" scripts/apps.config | cut -f2 -d " ")' >> scripts/logs.sh
+echo 'heroku logs --tail --app $appName' >> scripts/logs.sh
