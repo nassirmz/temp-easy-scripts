@@ -4,6 +4,11 @@ echo './createHerokuApps <service-name e.g. bus-hrs for css-dev-bus-hrs-service-
 serviceName=$1
 envs=(dev ma11 ra11 rs11 prod)
 
+# prompt
+if [ -z $serviceName ]; then
+	read -p 'serviceName: ' serviceName
+fi
+
 # create apps
 for env in ${envs[*]} ; do
 	appName=css-$env-$serviceName-service
