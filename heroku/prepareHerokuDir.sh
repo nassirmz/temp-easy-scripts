@@ -43,14 +43,14 @@ fi
 rm -rf scripts
 mkdir scripts
 touch 'scripts/deploy.sh'
-touch 'scripts/apps.config'
+touch 'scripts/apps.properties'
 touch 'scripts/logs.sh'
 chmod +x scripts/deploy.sh
 chmod +x scripts/logs.sh
 
 # apps config
 for env in ${envs[*]} ; do
-	echo $env css-$env-$serviceName-service >> scripts/apps.config
+	echo $env css-$env-$serviceName-service >> scripts/apps.properties
 done
 
 # deploy script
