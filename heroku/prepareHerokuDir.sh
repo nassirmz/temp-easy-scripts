@@ -66,7 +66,7 @@ echo 'fi' >> scripts/deploy.sh
 echo '' >> scripts/deploy.sh
 echo 'cd "${0%/*}"/..' >> scripts/deploy.sh
 echo '' >> scripts/deploy.sh
-echo 'appName=$(grep "$env" scripts/apps.config | cut -f2 -d " ")' >> scripts/deploy.sh
+echo 'appName=$(grep -i "$env" scripts/apps.properties | cut -f2 -d " ")' >> scripts/deploy.sh
 echo 'if [ $build != ? ]; then' >> scripts/deploy.sh
 echo '  echo "building"' >> scripts/deploy.sh
 echo '  ./gradlew -Dhttp.proxyHost=10.132.40.23 -Dhttp.proxyPort=80 -Dhttps.proxyHost=10.132.40.23 -Dhttps.proxyPort=80 clean build' >> scripts/deploy.sh
@@ -83,5 +83,5 @@ echo '  read -p "env: " env' >> scripts/logs.sh
 echo 'fi' >> scripts/logs.sh
 echo '' >> scripts/logs.sh
 echo 'cd "${0%/*}"/..' >> scripts/logs.sh
-echo 'appName=$(grep "$env" scripts/apps.config | cut -f2 -d " ")' >> scripts/logs.sh
-echo 'heroku logs --tail --app $appName' >> scripts/logs.sh
+echo 'appName=$(grep -i "$env" scripts/apps.properties | cut -f2 -d " ")' >> scripts/logs.sh
+echo 'https_proxy=http://10.132.40.23:80 http_proxy=http://10.132.40.23:80 heroku logs --tail --app $appName' >> scripts/logs.sh
